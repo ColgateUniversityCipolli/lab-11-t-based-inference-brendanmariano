@@ -1,5 +1,6 @@
 library(tidyverse)
 library(pwr)
+library(ggplot2)
 ################################################################################
 # Lab 10
 ################################################################################
@@ -45,7 +46,7 @@ ggplot(data = data) +
   theme_bw() + 
   ggtitle("Difference")
 
-
+view(data$`Farther Values`)
 ###############
 # Step 4
 ###############
@@ -61,31 +62,102 @@ val3 = t.test(data$difference, mu = 0,
               alternative =  "two.sided", 
               conf.level = .95)
 
-################
+####################################
 # Step 5
+####################################
+
 ################
-mu0 = 0
-length = length(data$`Farther Values`)
-resamples <- tibble(t=numeric(1000))
+# Closer values (less than test)
+################
+#Null distribution
 ggdat.t <- tibble(t=seq(-10,10,length.out=1000))|>
   mutate(pdf.null = dt(t, df=n-1)) 
+# t-distribution
+ggdat.test.stat = tibble(t = val$statistic, y = 0)
+mu0 = 0
+length = length(data$`Closer Values`)
+resamples <- tibble(t=numeric(1000))
 
 for(i in 1:1000){
-  curr.sample = sample(data$`Farther Values`, size = length, replace = TRUE)
+  curr.sample = sample(data$`Closer Values`, size = length, replace = TRUE)
   resamples$t[i] = (mean(curr.sample)-mu0)/(sd(curr.sample)/sqrt(length))
 }
 
-ggplot()+
-  geom_line(data=ggdat.t, aes(x=t, y=pdf.null, 
-                              color="T-distribution (Null)")) +
-  geom_density(data = resamples, aes(x = t, y = after_stat(density)))
-  theme_bw()
 
-#Hypothesis test one
+#Hypothesis test two
 
+ggplot() +
+  # null distribution
+  geom_line(data=ggdat.t, 
+            aes(x=t, y=pdf.null))+
+  geom_hline(yintercept=0)+
+  # rejection regions
+  # geom_ribbon(data=subset(ggdat.t, t<=qt(0.025, df=n-1)), 
+  #             aes(x=t, ymin=0, ymax=pdf.null),
+  #             fill="grey", alpha=0.5)+
+  # geom_ribbon(data=subset(ggdat.t, t>=qt(0.975, df=n-1)), 
+  #             aes(x=t, ymin=0, ymax=pdf.null),
+  #             fill="grey", alpha=0.5)+
+  # plot p-value (not visible)
+  # geom_ribbon(data=subset(ggdat.t, t>=t.stat), 
+  #             aes(x=t, ymin=0, ymax=pdf.null),
+  #             fill="reg", alpha=0.25)+
+  # plot observation point
+  geom_point(data=ggdat.test.stat, aes(x=t, y=y), color="red")+
+  # Resampling Distribution
+  stat_density(data=resamples, 
+               aes(x=t),
+               geom="line", color="grey")
 
+################
+#Farther values (greater than test)
+################
+#Computing the test statistic
+ggdat.test.stat2 = tibble(t = val2$statistic, y = 0)
+mu0 = 0
+length = length(data$`Farther Values`)
+resamples2 <- tibble(t=numeric(1000))
 
+for(i in 1:1000){
+  curr.sample = sample(data$`Farther Values`, size = length, replace = TRUE)
+  resamples2$t[i] = (mean(curr.sample)-mu0)/(sd(curr.sample)/sqrt(length))
+}
 
+# Plotting
+
+ggplot() +
+  # null distribution
+  geom_line(data=ggdat.t, 
+            aes(x=t, y=pdf.null))+
+  geom_hline(yintercept=0)+
+  # rejection regions
+   geom_ribbon(data=subset(ggdat.t, t<=qt(0.025, df=n-1)), 
+               aes(x=t, ymin=0, ymax=pdf.null),
+               fill="grey", alpha=0.5)+
+  # geom_ribbon(data=subset(ggdat.t, t>=qt(0.975, df=n-1)), 
+  #             aes(x=t, ymin=0, ymax=pdf.null),
+  #             fill="grey", alpha=0.5)+
+  # plot p-value (not visible)
+  # geom_ribbon(data=subset(ggdat.t, t>=t.stat), 
+  #             aes(x=t, ymin=0, ymax=pdf.null),
+  #             fill="reg", alpha=0.25)+
+  # plot observation point
+  geom_point(data=ggdat.test.stat2, aes(x=t, y=y), color="red")+
+  # Resampling Distribution
+  stat_density(data=resamples2, 
+               aes(x=t),
+               geom="line", color="grey")
+  #clean up aesthetics
+  theme_bw()+
+  scale_x_continuous("t",
+                     breaks = round(t.breaks,2),
+                     sec.axis = sec_axis(~.,
+                                         name = bquote(bar(x)),
+                                         breaks = t.breaks,
+                                         labels = round(xbar.breaks,2)))+
+  ylab("Density")+
+  ggtitle("T-Test for Mean Perceived Whiteness of Social Security Recipients",
+          subtitle=bquote(H[0]==3.5*";"~H[a]!=3.5))
 
 
 

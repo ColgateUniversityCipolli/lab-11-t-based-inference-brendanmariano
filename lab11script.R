@@ -45,8 +45,6 @@ ggplot(data = data) +
   geom_boxplot(aes(x = difference), fill = "blue") + 
   theme_bw() + 
   ggtitle("Difference")
-
-view(data$`Farther Values`)
 ###############
 # Step 4
 ###############
@@ -72,6 +70,10 @@ val3 = t.test(data$difference, mu = 0,
 #Null distribution
 ggdat.t <- tibble(t=seq(-10,10,length.out=1000))|>
   mutate(pdf.null = dt(t, df=n-1)) 
+#Calculates breaks for the plot
+# How can we just plug in n-1?
+val.tstat = as.numeric(val$statistic)
+t.breaks1 = c(-5, qt(.95, df = n-1), 0 , 5, val.tstat)
 # t-distribution
 ggdat.test.stat = tibble(t = val$statistic, y = 0)
 mu0 = 0
@@ -84,30 +86,36 @@ for(i in 1:1000){
 }
 
 
-#Hypothesis test two
-
 ggplot() +
   # null distribution
   geom_line(data=ggdat.t, 
             aes(x=t, y=pdf.null))+
   geom_hline(yintercept=0)+
-  # rejection regions
-  # geom_ribbon(data=subset(ggdat.t, t<=qt(0.025, df=n-1)), 
-  #             aes(x=t, ymin=0, ymax=pdf.null),
-  #             fill="grey", alpha=0.5)+
-  # geom_ribbon(data=subset(ggdat.t, t>=qt(0.975, df=n-1)), 
-  #             aes(x=t, ymin=0, ymax=pdf.null),
-  #             fill="grey", alpha=0.5)+
+  # rejection region
+  geom_ribbon(data=subset(ggdat.t, t>=qt(0.95, df=n-1)),
+              aes(x=t, ymin=0, ymax=pdf.null),
+              fill="grey", alpha=0.5)+
   # plot p-value (not visible)
-  # geom_ribbon(data=subset(ggdat.t, t>=t.stat), 
-  #             aes(x=t, ymin=0, ymax=pdf.null),
-  #             fill="reg", alpha=0.25)+
+  geom_ribbon(data=subset(ggdat.t, t>=val.tstat),
+              aes(x=t, ymin=0, ymax=pdf.null),
+              fill="orange", alpha=0.25)+
   # plot observation point
   geom_point(data=ggdat.test.stat, aes(x=t, y=y), color="red")+
   # Resampling Distribution
   stat_density(data=resamples, 
                aes(x=t),
-               geom="line", color="grey")
+               geom="line", color="grey") + 
+  #clean up aesthetics
+  theme_bw() + 
+  scale_x_continuous("t",
+                   breaks = round(t.breaks1,2))
+#                    sec.axis = sec_axis(~.,
+#                                        name = bquote(bar(x)),
+#                                        breaks = t.breaks,
+#                                        labels = round(xbar.breaks,2)))+
+# ylab("Density")+
+# ggtitle("T-Test for Mean Dopamine released in Close Responses",
+#         subtitle=bquote(H[0]==0*";"~H[a]!=NEED TO INSERT VALUE))
 
 ################
 #Farther values (greater than test)
@@ -117,49 +125,98 @@ ggdat.test.stat2 = tibble(t = val2$statistic, y = 0)
 mu0 = 0
 length = length(data$`Farther Values`)
 resamples2 <- tibble(t=numeric(1000))
-
+val2.tstat = as.numeric(val2$statistic)
 for(i in 1:1000){
   curr.sample = sample(data$`Farther Values`, size = length, replace = TRUE)
   resamples2$t[i] = (mean(curr.sample)-mu0)/(sd(curr.sample)/sqrt(length))
 }
 
 # Plotting
-
 ggplot() +
   # null distribution
   geom_line(data=ggdat.t, 
             aes(x=t, y=pdf.null))+
   geom_hline(yintercept=0)+
   # rejection regions
-   geom_ribbon(data=subset(ggdat.t, t<=qt(0.025, df=n-1)), 
+   geom_ribbon(data=subset(ggdat.t, t<=qt(0.05, df=n-1)), 
                aes(x=t, ymin=0, ymax=pdf.null),
                fill="grey", alpha=0.5)+
-  # geom_ribbon(data=subset(ggdat.t, t>=qt(0.975, df=n-1)), 
-  #             aes(x=t, ymin=0, ymax=pdf.null),
-  #             fill="grey", alpha=0.5)+
-  # plot p-value (not visible)
-  # geom_ribbon(data=subset(ggdat.t, t>=t.stat), 
-  #             aes(x=t, ymin=0, ymax=pdf.null),
-  #             fill="reg", alpha=0.25)+
+ # plot p-value (not visible)
+  geom_ribbon(data=subset(ggdat.t, t<=val2.tstat),
+              aes(x=t, ymin=0, ymax=pdf.null),
+              fill="orange", alpha=0.25)+
   # plot observation point
   geom_point(data=ggdat.test.stat2, aes(x=t, y=y), color="red")+
   # Resampling Distribution
   stat_density(data=resamples2, 
                aes(x=t),
-               geom="line", color="grey")
+               geom="line", color="grey") + 
   #clean up aesthetics
-  theme_bw()+
-  scale_x_continuous("t",
-                     breaks = round(t.breaks,2),
-                     sec.axis = sec_axis(~.,
-                                         name = bquote(bar(x)),
-                                         breaks = t.breaks,
-                                         labels = round(xbar.breaks,2)))+
-  ylab("Density")+
-  ggtitle("T-Test for Mean Perceived Whiteness of Social Security Recipients",
-          subtitle=bquote(H[0]==3.5*";"~H[a]!=3.5))
+  theme_bw()
+  # scale_x_continuous("t",
+  #                    breaks = round(t.breaks,2),
+  #                    sec.axis = sec_axis(~.,
+  #                                        name = bquote(bar(x)),
+  #                                        breaks = t.breaks,
+  #                                        labels = round(xbar.breaks,2)))+
+  # ylab("Density")+
+  # ggtitle("T-Test for Mean Dopamine released in Far Responses",
+  #         subtitle=bquote(H[0]==0*";"~H[a]!=NEED TO INSERT VALUE))
 
 
-
+  
+  
+  
+  
+################
+# Different Values (Not equal to test)
+################
+  
+  ggdat.test.stat3 = tibble(t = val3$statistic, y = 0)
+  mu0 = 0
+  length = length(data$difference)
+  resamples3 <- tibble(t=numeric(1000))
+  
+  for(i in 1:1000){
+    curr.sample = sample(data$difference, size = length, replace = TRUE)
+    resamples3$t[i] = (mean(curr.sample)-mu0)/(sd(curr.sample)/sqrt(length))
+  }
+  
+  # Plotting
+  
+  ggplot() +
+    # null distribution
+    geom_line(data=ggdat.t, 
+              aes(x=t, y=pdf.null))+
+    geom_hline(yintercept=0)+
+    # rejection regions
+    geom_ribbon(data=subset(ggdat.t, t<=qt(0.025, df=n-1)), 
+                aes(x=t, ymin=0, ymax=pdf.null),
+                fill="grey", alpha=0.5)+
+    geom_ribbon(data=subset(ggdat.t, t>=qt(0.975, df=n-1)),
+                aes(x=t, ymin=0, ymax=pdf.null),
+                fill="grey", alpha=0.5)+
+    # plot p-value (not visible)
+    #MIGHT NEED TO FIX
+    geom_ribbon(data=subset(ggdat.t, t>=val3$statistic),
+                aes(x=t, ymin=0, ymax=pdf.null),
+                fill="orange", alpha=0.25)+
+    # plot observation point
+    geom_point(data=ggdat.test.stat3, aes(x=t, y=y), color="red")+
+    # Resampling Distribution
+    stat_density(data=resamples3, 
+                 aes(x=t),
+                 geom="line", color="grey") + 
+  #clean up aesthetics
+  theme_bw()
+  # scale_x_continuous("t",
+  #                    breaks = round(t.breaks,2),
+  #                    sec.axis = sec_axis(~.,
+  #                                        name = bquote(bar(x)),
+  #                                        breaks = t.breaks,
+  #                                        labels = round(xbar.breaks,2)))+
+  # ylab("Density")+
+  # ggtitle("T-Test for Mean Perceived Whiteness of Social Security Recipients",
+  #         subtitle=bquote(H[0]==3.5*";"~H[a]!=3.5))
 
 

@@ -41,6 +41,14 @@ conduct a power analysis. How many observations would the researchers
 need to detect a moderate-to-large effect ($d=0.65$) when using 
 $\alpha=0.05$ and default power (0.80) for a two-sided one sample 
 $t$ test.
+<<size = "scriptsize">>=
+library(pwr)
+(n.value = pwr.t.test(d = 0.65, # large effect
+           power = 0.80,
+           sig.level = 0.05,
+           alternative = "two.sided",
+           type = "one.sample")$n)
+@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % COLLECT DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -50,6 +58,11 @@ do to collect the data for Figure 2(g). Note that you only need the
 \texttt{closer\_vals} and \texttt{further\_vals}. Ensure to 
 \texttt{mutate()} the data to get a difference 
 (e.g., \texttt{closer\_vals - further\_vals}).
+\textbf{We first collected the data from the given website and downloaded the right source data. Once we had the file, we first accessed the \texttt{closer\_vals} and \texttt{further\_vals} sheets and copy and pasted them together into one sheet. After, we added column names and then downloaded the file as a CSV to be accessed in R. From there, we were able to mutate and add a column showing the difference.}
+<<size = "scriptsize">>= 
+  data = read_csv("data.csv") |>
+  mutate(difference = `Closer Values` - `Farther Values`)
+@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % SUMMARIZE DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -58,13 +71,49 @@ do to collect the data for Figure 2(g). Note that you only need the
   \item Summarize the further data. Do the data suggest that
    dopamine in the brains of young zebra finches decreases when
    they sing further away?
+   \begin{table}[ht]
+\centering
+\begin{tabular}{rlrr}
+  \hline
+ & Type & Mean & SD \\ 
+  \hline
+1 & Closer Values & 0.16 & 0.09 \\ 
+  2 & Farther Values & -0.20 & 0.13 \\ 
+  3 & Difference & 0.36 & 0.21 \\ 
+   \hline
+\end{tabular}
+\end{table}
+    \begin{figure}[H]
+  \begin{center}
+    \includegraphics[scale=0.35]{farther.pdf}
+    \caption{}
+    \label{moe}
+  \end{center}
+\end{figure}
+    \textbf{The data suggests that the average percent change in flourescence within  the brains of the animal decreases because all values within the range of the box plot are negative with no large outliers. This means that for every distant syllable rendition, the finches dopamine levels decrease.}
    \item Summarize the closer data. Do the data suggest that
    dopamine in the brains of young zebra finches increases when
    they sing closer to their adult song?
+    \begin{figure}[H]
+  \begin{center}
+    \includegraphics[scale=0.35]{closer.pdf}
+    \caption{}
+    \label{moe}
+  \end{center}
+\end{figure}
+    \textbf{The data suggests that the average percent change in flourescence within the brains of the animal increases in this case because all values within the range of the box plot are positive with no low outliers. This means that for every distant syllable rendition, the finches dopamine levels increases.}
   \item Summarize the paired differences. Do the data suggest
   that there is a difference between dopamine in the brains of
   young zebra finches when they sing further away compared to 
   closer to their adult song?
+     \begin{figure}[H]
+  \begin{center}
+    \includegraphics[scale=0.35]{difference.pdf}
+    \caption{}
+    \label{moe}
+  \end{center}
+\end{figure}
+    \textbf{All of the values for difference (closer values \- farther values) in average percent change in flourescence are non-zero and positive as shown by the box plot. This means that there is a difference between the change in flourescence among close and far renditions, which ultimately means that there impact on dopamine levels is different.}
   \item \textbf{Optional Challenge:} Can you reproduce Figure 2(g)?
   Note that the you can use \texttt{geom\_errorbar()} to plot
   the range created by adding the mean $\pm$ one standard deviation.

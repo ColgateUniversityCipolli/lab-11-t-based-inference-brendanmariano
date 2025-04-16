@@ -8,11 +8,11 @@ library(ggplot2)
 #############
 # Step 1
 #############
-n.value = pwr.t.test(d = 0.65, # large effect
+(n.value = pwr.t.test(d = 0.65, # large effect
            power = 0.80,
            sig.level = 0.05,
            alternative = "two.sided",
-           type = "one.sample")$n
+           type = "one.sample")$n)
 ############
 # Step 2 and 3
 ############
@@ -74,6 +74,7 @@ ggdat.t <- tibble(t=seq(-10,10,length.out=1000))|>
 # How can we just plug in n-1?
 val.tstat = as.numeric(val$statistic)
 t.breaks1 = c(-5, qt(.95, df = n-1), 0 , 5, val.tstat)
+xbar.breaks = val.tstat * sd()
 # t-distribution
 ggdat.test.stat = tibble(t = val$statistic, y = 0)
 mu0 = 0
@@ -108,14 +109,14 @@ ggplot() +
   #clean up aesthetics
   theme_bw() + 
   scale_x_continuous("t",
-                   breaks = round(t.breaks1,2))
-#                    sec.axis = sec_axis(~.,
-#                                        name = bquote(bar(x)),
-#                                        breaks = t.breaks,
-#                                        labels = round(xbar.breaks,2)))+
-# ylab("Density")+
-# ggtitle("T-Test for Mean Dopamine released in Close Responses",
-#         subtitle=bquote(H[0]==0*";"~H[a]!=NEED TO INSERT VALUE))
+                   breaks = round(t.breaks1,2)) + 
+                   sec.axis = sec_axis(~.,
+                                       name = bquote(bar(x)),
+                                       breaks = t.breaks1,
+                                       labels = round(xbar.breaks1,2)))+
+ylab("Density")+
+ggtitle("T-Test for Mean Dopamine released in Close Responses",
+        subtitle=bquote(H[0]==0*";"~H[a]!=0))
 
 ################
 #Farther values (greater than test)
@@ -152,16 +153,16 @@ ggplot() +
                aes(x=t),
                geom="line", color="grey") + 
   #clean up aesthetics
-  theme_bw()
+  theme_bw() + 
   # scale_x_continuous("t",
   #                    breaks = round(t.breaks,2),
   #                    sec.axis = sec_axis(~.,
   #                                        name = bquote(bar(x)),
   #                                        breaks = t.breaks,
   #                                        labels = round(xbar.breaks,2)))+
-  # ylab("Density")+
-  # ggtitle("T-Test for Mean Dopamine released in Far Responses",
-  #         subtitle=bquote(H[0]==0*";"~H[a]!=NEED TO INSERT VALUE))
+  ylab("Density")+
+  ggtitle("T-Test for Mean Dopamine released in Far Responses",
+          subtitle=bquote(H[0]==0*";"~H[a]!=0))
 
 
   
@@ -208,15 +209,15 @@ ggplot() +
                  aes(x=t),
                  geom="line", color="grey") + 
   #clean up aesthetics
-  theme_bw()
+  theme_bw() +
   # scale_x_continuous("t",
   #                    breaks = round(t.breaks,2),
   #                    sec.axis = sec_axis(~.,
   #                                        name = bquote(bar(x)),
   #                                        breaks = t.breaks,
   #                                        labels = round(xbar.breaks,2)))+
-  # ylab("Density")+
-  # ggtitle("T-Test for Mean Perceived Whiteness of Social Security Recipients",
-  #         subtitle=bquote(H[0]==3.5*";"~H[a]!=3.5))
+  ylab("Density")+
+  ggtitle("T-Test for Mean Difference Between Closer and Farther Dopamine Releases",
+          subtitle=bquote(H[0]==0*";"~H[a]!=0))
 
 

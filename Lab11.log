@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2025) (preloaded format=pdflatex 2025.4.9)  16 APR 2025 17:50
+This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2025) (preloaded format=pdflatex 2025.4.9)  17 APR 2025 12:26
 entering extended mode
  \write18 enabled.
  %&-line parsing enabled.
@@ -299,6 +299,15 @@ LaTeX Warning: Label `moe' multiply defined.
 
 LaTeX Warning: Label `moe' multiply defined.
 
+
+LaTeX Warning: Label `moe' multiply defined.
+
+
+LaTeX Warning: Label `moe' multiply defined.
+
+
+LaTeX Warning: Label `moe' multiply defined.
+
 )
 \openout1 = `Lab11.aux'.
 
@@ -414,14 +423,47 @@ Overfull \hbox (8.15382pt too wide) in paragraph at lines 178--181
 []\OT1/cmr/bx/n/10 Optional Chal-lenge: \OT1/cmr/m/n/10 Can you re-pro-duce Fig-ure 2(g)? Note that the you can use \OT1/cmtt/m/n/10 geom[]errorbar()
  []
 
-(./Lab11.bbl)
+<closerg.pdf, id=47, 336.25626pt x 197.73875pt>
+File: closerg.pdf Graphic file (type pdf)
+<use closerg.pdf>
+Package pdftex.def Info: closerg.pdf  used on input line 207.
+(pdftex.def)             Requested size: 168.12772pt x 98.86913pt.
+<fartherg.pdf, id=48, 336.25626pt x 197.73875pt>
+File: fartherg.pdf Graphic file (type pdf)
+<use fartherg.pdf>
+Package pdftex.def Info: fartherg.pdf  used on input line 215.
+(pdftex.def)             Requested size: 168.12772pt x 98.86913pt.
+
 
 [3
 pdfTeX warning (ext4): destination with the same identifier (name{figure.3}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.209 \end{document}
-                     <./difference.pdf>] (./Lab11.aux)
+l.220   \item Q
+               uestion 4, part(c).
+pdfTeX warning (ext4): destination with the same identifier (name{figure.4}) has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.220   \item Q
+               uestion 4, part(c). <./difference.pdf> <./closerg.pdf>]
+<diffg.pdf, id=81, 336.25626pt x 197.73875pt>
+File: diffg.pdf Graphic file (type pdf)
+<use diffg.pdf>
+Package pdftex.def Info: diffg.pdf  used on input line 223.
+(pdftex.def)             Requested size: 168.12772pt x 98.86913pt.
+(./Lab11.bbl)
+
+[4
+pdfTeX warning (ext4): destination with the same identifier (name{figure.5}) has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.233 \end{document}
+                    
+pdfTeX warning (ext4): destination with the same identifier (name{figure.6}) has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.233 \end{document}
+                     <./fartherg.pdf> <./diffg.pdf>] (./Lab11.aux)
  ***********
 LaTeX2e <2024-11-01> patch level 2
 L3 programming layer <2025-03-26>
@@ -433,18 +475,18 @@ Package rerunfilecheck Info: File `Lab11.out' has not changed.
 (rerunfilecheck)             Checksum: D41D8CD98F00B204E9800998ECF8427E;0.
  ) 
 Here is how much of TeX's memory you used:
- 11163 strings out of 471607
- 174016 string characters out of 5519802
+ 11188 strings out of 471607
+ 174486 string characters out of 5519802
  588822 words of memory out of 5000000
- 37564 multiletter control sequences out of 15000+600000
+ 37585 multiletter control sequences out of 15000+600000
  630287 words of font info for 55 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 75i,9n,79p,542b,691s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 75i,9n,79p,542b,703s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </Users/brendanmariano/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></Users/brendanmariano/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></Users/brendanmariano/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmitt10.pfb></Users/brendanmariano/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></Users/brendanmariano/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></Users/brendanmariano/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></Users/brendanmariano/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></Users/brendanmariano/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></Users/brendanmariano/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb></Users/brendanmariano/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb></Users/brendanmariano/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt8.pfb>
-Output written on Lab11.pdf (3 pages, 151490 bytes).
+Output written on Lab11.pdf (4 pages, 189939 bytes).
 PDF statistics:
- 125 PDF objects out of 1000 (max. 8388607)
- 91 compressed objects within 1 object stream
- 25 named destinations out of 1000 (max. 500000)
- 16 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 166 PDF objects out of 1000 (max. 8388607)
+ 124 compressed objects within 2 object streams
+ 29 named destinations out of 1000 (max. 500000)
+ 31 words of extra memory for PDF output out of 10000 (max. 10000000)
 

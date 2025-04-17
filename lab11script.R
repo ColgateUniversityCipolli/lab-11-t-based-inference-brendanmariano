@@ -1,6 +1,7 @@
 library(tidyverse)
 library(pwr)
 library(ggplot2)
+library(effectsize)
 ################################################################################
 # Lab 10
 ################################################################################
@@ -25,26 +26,29 @@ numerical.summary = data |>
   group_by(Type) |>
   summarize(mean = mean(Dopamine), sd = sd(Dopamine))
 
-numerical.summary
+view(numerical.summary)
   
 # Further data
 ggplot(data = data) +
   geom_boxplot(aes(x = `Farther Values`), 
                 fill = "royalblue") + 
   theme_bw() + 
-  ggtitle("Farther Data")
+  ggtitle("Farther Data") + 
+  xlab("Average Percent Change in Flourescence")
 # Closer data
 ggplot(data = data) + 
   geom_boxplot(aes(x = `Closer Values`), 
                  fill = "purple") +
   theme_bw() +
-  ggtitle("Closer Data")
+  ggtitle("Closer Data") + 
+  xlab("Average Percent Change in Flourescence")
 
 #Difference data
 ggplot(data = data) + 
   geom_boxplot(aes(x = difference), fill = "blue") + 
   theme_bw() + 
-  ggtitle("Difference")
+  ggtitle("Difference") + 
+  xlab("Average Percent Change in Flourescence")
 ###############
 # Step 4
 ###############
@@ -52,13 +56,21 @@ ggplot(data = data) +
 val = t.test(data$`Closer Values`, mu = 0,
              alternative =  "greater", 
              conf.level = .95)
-
+conf1 = t.test(data$`Closer Values`, mu = 0,
+             alternative =  "two.sided", 
+             conf.level = .95)
+g1 = hedges_g(x = data$`Closer Values`, mu = 0)
 val2 = t.test(data$`Farther Values`, mu = 0,
              alternative =  "less", 
              conf.level = .95)
+conf2 = t.test(data$`Farther Values`, mu = 0,
+             alternative =  "two.sided", 
+             conf.level = .95)
+g2 = hedges_g(x = data$`Farther Values`, mu = 0)
 val3 = t.test(data$difference, mu = 0,
               alternative =  "two.sided", 
               conf.level = .95)
+g3 = hedges_g(x = data$difference, mu = 0)
 
 ####################################
 # Step 5
@@ -74,7 +86,7 @@ ggdat.t <- tibble(t=seq(-10,10,length.out=1000))|>
 # How can we just plug in n-1?
 val.tstat = as.numeric(val$statistic)
 t.breaks1 = c(-5, qt(.95, df = n-1), 0 , 5, val.tstat)
-xbar.breaks = val.tstat * sd()
+xbar.breaks1 = t.breaks1 * sd(data$`Closer Values`)/sqrt(length(data$`Closer Values`)) + 0
 # t-distribution
 ggdat.test.stat = tibble(t = val$statistic, y = 0)
 mu0 = 0
@@ -85,7 +97,6 @@ for(i in 1:1000){
   curr.sample = sample(data$`Closer Values`, size = length, replace = TRUE)
   resamples$t[i] = (mean(curr.sample)-mu0)/(sd(curr.sample)/sqrt(length))
 }
-
 
 ggplot() +
   # null distribution
@@ -109,14 +120,14 @@ ggplot() +
   #clean up aesthetics
   theme_bw() + 
   scale_x_continuous("t",
-                   breaks = round(t.breaks1,2)) + 
+                   breaks = round(t.breaks1,2), 
                    sec.axis = sec_axis(~.,
                                        name = bquote(bar(x)),
                                        breaks = t.breaks1,
                                        labels = round(xbar.breaks1,2)))+
 ylab("Density")+
 ggtitle("T-Test for Mean Dopamine released in Close Responses",
-        subtitle=bquote(H[0]==0*";"~H[a]!=0))
+        subtitle=bquote(H[0]==0*";"~H[a]>0))
 
 ################
 #Farther values (greater than test)
@@ -125,6 +136,9 @@ ggtitle("T-Test for Mean Dopamine released in Close Responses",
 ggdat.test.stat2 = tibble(t = val2$statistic, y = 0)
 mu0 = 0
 length = length(data$`Farther Values`)
+val.tstat2 = as.numeric(val2$statistic)
+t.breaks2 = c(-5, qt(.95, df = n-1), 0 , 5, val.tstat2)
+xbar.breaks2 = t.breaks2 * sd(data$`Farther Values`)/sqrt(length(data$`Farther Values`)) + 0
 resamples2 <- tibble(t=numeric(1000))
 val2.tstat = as.numeric(val2$statistic)
 for(i in 1:1000){
@@ -154,20 +168,17 @@ ggplot() +
                geom="line", color="grey") + 
   #clean up aesthetics
   theme_bw() + 
-  # scale_x_continuous("t",
-  #                    breaks = round(t.breaks,2),
-  #                    sec.axis = sec_axis(~.,
-  #                                        name = bquote(bar(x)),
-  #                                        breaks = t.breaks,
-  #                                        labels = round(xbar.breaks,2)))+
+  scale_x_continuous("t",
+                     breaks = round(t.breaks2,2),
+                     sec.axis = sec_axis(~.,
+                                         name = bquote(bar(x)),
+                                         breaks = t.breaks2,
+                                         labels = round(xbar.breaks2,2)))+
   ylab("Density")+
   ggtitle("T-Test for Mean Dopamine released in Far Responses",
-          subtitle=bquote(H[0]==0*";"~H[a]!=0))
+          subtitle=bquote(H[0]==0*";"~H[a]<0))
 
 
-  
-  
-  
   
 ################
 # Different Values (Not equal to test)
@@ -176,6 +187,9 @@ ggplot() +
   ggdat.test.stat3 = tibble(t = val3$statistic, y = 0)
   mu0 = 0
   length = length(data$difference)
+  val.tstat3 = as.numeric(val3$statistic)
+  t.breaks3 = c(-5, qt(.95, df = n-1), 0 , 5, val.tstat3)
+  xbar.breaks3 = t.breaks3 * sd(data$difference)/sqrt(length(data$difference)) + 0
   resamples3 <- tibble(t=numeric(1000))
   
   for(i in 1:1000){
@@ -210,12 +224,12 @@ ggplot() +
                  geom="line", color="grey") + 
   #clean up aesthetics
   theme_bw() +
-  # scale_x_continuous("t",
-  #                    breaks = round(t.breaks,2),
-  #                    sec.axis = sec_axis(~.,
-  #                                        name = bquote(bar(x)),
-  #                                        breaks = t.breaks,
-  #                                        labels = round(xbar.breaks,2)))+
+  scale_x_continuous("t",
+                     breaks = round(t.breaks3,2),
+                     sec.axis = sec_axis(~.,
+                                         name = bquote(bar(x)),
+                                         breaks = t.breaks3,
+                                         labels = round(xbar.breaks3,2)))+
   ylab("Density")+
   ggtitle("T-Test for Mean Difference Between Closer and Farther Dopamine Releases",
           subtitle=bquote(H[0]==0*";"~H[a]!=0))
